@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://gre-z.github.io/"/>
-  <updated>2019-04-20T12:44:37.144Z</updated>
+  <updated>2019-04-24T12:31:19.022Z</updated>
   <id>http://gre-z.github.io/</id>
   
   <author>
@@ -15,6 +15,67 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Beego 自定义过滤验证器</title>
+    <link href="http://gre-z.github.io/2019/04/24/Beego-%E8%87%AA%E5%AE%9A%E4%B9%89%E8%BF%87%E6%BB%A4%E9%AA%8C%E8%AF%81%E5%99%A8/"/>
+    <id>http://gre-z.github.io/2019/04/24/Beego-自定义过滤验证器/</id>
+    <published>2019-04-24T12:11:21.000Z</published>
+    <updated>2019-04-24T12:31:19.022Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h3 id=&quot;验证器-一阶段&quot;&gt;&lt;a href=&quot;#验证器-一阶段&quot; class=&quot;headerlink&quot; title=&quot;验证器 一阶段&quot;&gt;&lt;/a&gt;验证器 一阶段&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td
+        
+      
+    
+    </summary>
+    
+      <category term="go" scheme="http://gre-z.github.io/categories/go/"/>
+    
+    
+      <category term="go" scheme="http://gre-z.github.io/tags/go/"/>
+    
+      <category term="beego" scheme="http://gre-z.github.io/tags/beego/"/>
+    
+      <category term="vilidated" scheme="http://gre-z.github.io/tags/vilidated/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Go语言闭包</title>
+    <link href="http://gre-z.github.io/2019/04/24/Go%E8%AF%AD%E8%A8%80%E9%97%AD%E5%8C%85/"/>
+    <id>http://gre-z.github.io/2019/04/24/Go语言闭包/</id>
+    <published>2019-04-24T11:43:01.000Z</published>
+    <updated>2019-04-24T12:10:32.205Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;什么是闭包&quot;&gt;&lt;a href=&quot;#什么是闭包&quot; class=&quot;headerlink&quot; title=&quot;什么是闭包&quot;&gt;&lt;/a&gt;什么是闭包&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;环境(某些初始化操作 如定义变量) + 函数(返回一个函数用于后续调用)&lt;h2
+        
+      
+    
+    </summary>
+    
+      <category term="go" scheme="http://gre-z.github.io/categories/go/"/>
+    
+    
+      <category term="go" scheme="http://gre-z.github.io/tags/go/"/>
+    
+      <category term="gorm" scheme="http://gre-z.github.io/tags/gorm/"/>
+    
+      <category term="闭包" scheme="http://gre-z.github.io/tags/%E9%97%AD%E5%8C%85/"/>
+    
+  </entry>
   
   <entry>
     <title>Go语言时间解析Json/Gorm框架解析</title>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Go语言闭包 | Gre-Z</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="什么是闭包 环境(某些初始化操作 如定义变量) + 函数(返回一个函数用于后续调用)简单示例12345678910111213141516171819202122232425262728293031323334package mainimport (    &quot;fmt&quot;)// 创建一个玩家生成器, 输入名称, 输出生成器func playerGen(name string) func() (stri">
+<meta name="keywords" content="go,gorm,闭包">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go语言闭包">
+<meta property="og:url" content="http://gre-z.github.io/2019/04/24/Go语言闭包/index.html">
+<meta property="og:site_name" content="Gre-Z">
+<meta property="og:description" content="什么是闭包 环境(某些初始化操作 如定义变量) + 函数(返回一个函数用于后续调用)简单示例12345678910111213141516171819202122232425262728293031323334package mainimport (    &quot;fmt&quot;)// 创建一个玩家生成器, 输入名称, 输出生成器func playerGen(name string) func() (stri">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2019-04-24T12:10:32.205Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Go语言闭包">
+<meta name="twitter:description" content="什么是闭包 环境(某些初始化操作 如定义变量) + 函数(返回一个函数用于后续调用)简单示例12345678910111213141516171819202122232425262728293031323334package mainimport (    &quot;fmt&quot;)// 创建一个玩家生成器, 输入名称, 输出生成器func playerGen(name string) func() (stri">
+  
+    <link rel="alternate" href="/atom.xml" title="Gre-Z" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+    <div id="banner"></div>
+    <div id="header-outer" class="outer">
+        <!--        <div id="header-title" class="inner">-->
+        <!--            <img src="images/avatar.jpg" style="width: 100px;border: 3px solid #eee;border-radius: 50%;"/>-->
+        <!--        </div>-->
+        <div id="header-inner" class="inner">
+            <nav id="main-nav">
+                <a id="main-nav-toggle" class="nav-icon"></a>
+                
+                    <a class="main-nav-link" style="font-size: 16px;font-weight: bold;" href="/">首页</a>
+                
+                    <a class="main-nav-link" style="font-size: 16px;font-weight: bold;" href="/archives">档案</a>
+                
+
+            </nav>
+
+            <nav id="sub-nav">
+                
+                    <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+                
+
+            </nav>
+        </div>
+    </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Go语言闭包" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/04/24/Go语言闭包/" class="article-date">
+  <time datetime="2019-04-24T11:43:01.000Z" itemprop="datePublished">2019-04-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/go/">go</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header" style="margin-bottom:5px;color:#4876FF">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Go语言闭包
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是闭包"><a href="#什么是闭包" class="headerlink" title="什么是闭包"></a>什么是闭包</h2><ul>
+<li>环境(某些初始化操作 如定义变量) + 函数(返回一个函数用于后续调用)<h2 id="简单示例"><a href="#简单示例" class="headerlink" title="简单示例"></a>简单示例</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">// 创建一个玩家生成器, 输入名称, 输出生成器</span><br><span class="line">func playerGen(name string) func() (string, int) &#123;</span><br><span class="line"></span><br><span class="line">    // 血量一直为150</span><br><span class="line">    // 环境</span><br><span class="line">    hp := 150</span><br><span class="line"></span><br><span class="line">    // 返回创建的闭包</span><br><span class="line">    // 函数</span><br><span class="line">    <span class="built_in">return</span> func() (string, int) &#123;</span><br><span class="line">        // 将变量引用到闭包中</span><br><span class="line">        <span class="built_in">return</span> name, hp</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func <span class="function"><span class="title">main</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    // 创建一个玩家生成器 </span><br><span class="line">    // 在这里初始化了环境</span><br><span class="line">    generator := playerGen(<span class="string">"high noon"</span>) </span><br><span class="line">    </span><br><span class="line">    // 执行该环境里的函数</span><br><span class="line">    // 返回玩家的名字和血量</span><br><span class="line">    name, hp := generator()</span><br><span class="line"></span><br><span class="line">    // 打印值</span><br><span class="line">    fmt.Println(name, hp)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="为什么用到这个"><a href="#为什么用到这个" class="headerlink" title="为什么用到这个"></a>为什么用到这个</h2><h3 id="查询数据库时经常要关联查询省市区代码数据"><a href="#查询数据库时经常要关联查询省市区代码数据" class="headerlink" title="查询数据库时经常要关联查询省市区代码数据"></a>查询数据库时经常要关联查询省市区代码数据</h3><blockquote>
+<p>因为五级省市区数据大,关联性能严重下讲</p>
+</blockquote>
+<blockquote>
+<p>如果每次重redis取数据 在大量地址相同的情况下性能些微影响 所以缓存到map中</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">// 缓存读取省市区</span><br><span class="line">func (c *Cache) SetArea() func(string) string &#123;</span><br><span class="line">	db2 := db.Sql().Model(models.Feipin_district2&#123;&#125;) //来自Gorm框架实例</span><br><span class="line">	areaMap := make(map[string]string) //初始化一个空的 map</span><br><span class="line">	<span class="built_in">return</span> func(code string) (name string) &#123; //这里返回一个闭包函数</span><br><span class="line">	    <span class="keyword">if</span> v, ok := areaMap[code]; !ok &#123; //如果map没有这个数据 则从缓存中读取并添加到map中</span><br><span class="line">			<span class="keyword">if</span> str, err := c.GetCache(code); err == nil &#123;//从redis缓存读取   			</span><br><span class="line">			    areaMap[code] = str</span><br><span class="line">				<span class="built_in">return</span> str</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;//map没有数据 且 缓存没有 则从数据库中查询添加到缓存中</span><br><span class="line">				area := models.Feipin_district2&#123;&#125; //初始化数据库结构体</span><br><span class="line">				<span class="keyword">if</span> err := db2.Where(<span class="string">"code=?"</span>, code).First(&amp;area).Error; err == nil &#123;</span><br><span class="line">					name = area.Name</span><br><span class="line">					areaMap[code] = name</span><br><span class="line">					c.SetCache(code, name, 0) //添加到redis缓存</span><br><span class="line">					area = models.Feipin_district2&#123;&#125;</span><br><span class="line">					<span class="built_in">return</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123; 如果map有数据则直接返回</span><br><span class="line">			<span class="built_in">return</span> v</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">return</span></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="省市区结构体"><a href="#省市区结构体" class="headerlink" title="省市区结构体"></a>省市区结构体</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">type</span> Feipin_district2 struct &#123;</span><br><span class="line">	Id       int64</span><br><span class="line">	Name     string `description:<span class="string">"名称"</span>`</span><br><span class="line">	ParentId int64  `description:<span class="string">"上级id"</span>`</span><br><span class="line">	Code     string `description:<span class="string">"码"</span>`</span><br><span class="line">	Level    int64  `description:<span class="string">"层级"</span>`</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">area := Cache&#123;&#125;.SetArea() //初始化这个闭包</span><br><span class="line"></span><br><span class="line">province := area(<span class="string">"350000"</span>) //返回对应的中文</span><br><span class="line">city := area(<span class="string">"350200"</span>) //返回对应的中文</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://gre-z.github.io/2019/04/24/Go语言闭包/" data-id="cjuv69xyk0000lncedue6cr8u" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/go/">go</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gorm/">gorm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/闭包/">闭包</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/04/24/Beego-自定义过滤验证器/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Beego 自定义过滤验证器
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/04/20/Go语言时间解析Json-Gorm框架解析/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Go语言时间解析Json/Gorm框架解析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/go/">go</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/beego/">beego</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gorm/">gorm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/time-Time/">time.Time</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vilidated/">vilidated</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/闭包/">闭包</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/beego/" style="font-size: 10px;">beego</a> <a href="/tags/go/" style="font-size: 20px;">go</a> <a href="/tags/gorm/" style="font-size: 15px;">gorm</a> <a href="/tags/time-Time/" style="font-size: 10px;">time.Time</a> <a href="/tags/vilidated/" style="font-size: 10px;">vilidated</a> <a href="/tags/闭包/" style="font-size: 10px;">闭包</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/24/Beego-自定义过滤验证器/">Beego 自定义过滤验证器</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/24/Go语言闭包/">Go语言闭包</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/20/Go语言时间解析Json-Gorm框架解析/">Go语言时间解析Json/Gorm框架解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+    
+
+    <div style="width: 100%;text-align: center;">
+        <img src="images/wx.png" style="width: 80px">
+        <div id="footer-info" style="margin-top: 10px;">
+            <div style="font-size: 14px;">
+                &copy; 2019 过水无痕
+                <a href="mailto:golang.zgl@gmail.com" title="Email">Email</a>
+                <a href="https://github.com/Gre-Z">Github</a>
+            </div>
+<!--            <br>-->
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+            <br>
+        </div>
+    </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">档案</a>
+  
+</nav>
+    
+
+<script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

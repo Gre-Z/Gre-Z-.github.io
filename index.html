@@ -61,6 +61,112 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Beego-自定义过滤验证器" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/04/24/Beego-自定义过滤验证器/" class="article-date">
+  <time datetime="2019-04-24T12:11:21.000Z" itemprop="datePublished">2019-04-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/go/">go</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header" style="margin-bottom:5px;color:#4876FF">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/24/Beego-自定义过滤验证器/">Beego 自定义过滤验证器</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="验证器-一阶段"><a href="#验证器-一阶段" class="headerlink" title="验证器 一阶段"></a>验证器 一阶段</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line">// 部分正则表达式</span><br><span class="line">const (</span><br><span class="line">	RgxNumber         = `\d+`</span><br><span class="line">	RgxTelephone      = <span class="string">"1[345789]\\d&#123;9&#125;"</span></span><br><span class="line">	RgxPageSize       = `([1-9][0-9]&#123;0,1&#125;|100)` //1-100</span><br><span class="line">	RgxAll            = `[\s\S]*`</span><br><span class="line">	RgxBool           = `(<span class="literal">true</span>|<span class="literal">false</span>)`</span><br><span class="line">	RgxAsc            = `(asc|desc)`</span><br><span class="line">	RgxBuildName      = `[^请手动][\s\S]*`</span><br><span class="line">	RgxNumberPositive = `[1-9]\d*$`        //匹配正整数</span><br><span class="line">	RgxChinese        = <span class="string">"[\u4e00-\u9fa5]+"</span> // 匹配中文</span><br><span class="line">	RgxProvince       = <span class="string">"[1-9]\\d&#123;5&#125;"</span></span><br><span class="line">	RgxCity           = RgxProvince</span><br><span class="line">	RgxDistrict       = RgxProvince</span><br><span class="line">	RgxTown           = <span class="string">"[1-9]\\d&#123;8&#125;"</span></span><br><span class="line">	RgxVillage        = <span class="string">"[1-9]\\d&#123;11&#125;"</span></span><br><span class="line">	RgxTimestamp      = <span class="string">"[1-9]\\d&#123;9&#125;"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">type</span> Valid struct &#123;</span><br><span class="line">	Rgx     string</span><br><span class="line">	Msg     string</span><br><span class="line">	Default interface&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">type</span> ValidRegister map[string]Valid</span><br><span class="line"></span><br><span class="line">func (value ValidRegister) Comparison(data *url.Values) (err error) &#123;</span><br><span class="line">	<span class="keyword">for</span> k, v := range value &#123; // 遍历书写的过滤器 </span><br><span class="line">		val, ok := (*data)[k] // 取出有设置验证的字段进行比对 </span><br><span class="line">		<span class="keyword">if</span> !ok &#123; // 有这个验证器 但是没有接受到这个参数</span><br><span class="line">			<span class="keyword">if</span> v.Default == nil &#123; //且没有设置默认值 直接返回错误</span><br><span class="line">				<span class="built_in">return</span> fmt.Errorf(<span class="string">"[%s]必须存在   /   注释:%s"</span>, k, v.Msg)</span><br><span class="line">			&#125;</span><br><span class="line">			valueTemp, bl := v.Default.(string)</span><br><span class="line">			<span class="keyword">if</span> !bl &#123;</span><br><span class="line">				<span class="built_in">return</span> fmt.Errorf(<span class="string">"默认值仅支持 (string) 类型"</span>)</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123; // 将默认值添加到参数并直接返回不验证</span><br><span class="line">				(*data)[k] = []string&#123;valueTemp&#125;</span><br><span class="line">				<span class="built_in">continue</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">for</span> j := 0; j &lt; len(val); j++ &#123; //因为接收到的参数以列表存在 所以进行遍历判断</span><br><span class="line">			<span class="keyword">if</span> v.Rgx == <span class="string">""</span> &#123;</span><br><span class="line">				v.Rgx = RgxAll</span><br><span class="line">			&#125;</span><br><span class="line">			rgx, err := regexp.Compile(<span class="string">"^"</span> + v.Rgx + <span class="string">"$"</span>)</span><br><span class="line">			<span class="keyword">if</span> err != nil &#123;</span><br><span class="line">				beego.Debug(err)</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> !rgx.MatchString(val[j]) &#123;</span><br><span class="line">				<span class="built_in">return</span> fmt.Errorf(<span class="string">"[%s]不符合格式   /   注释:%s"</span>, k, v.Msg)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">return</span> nil</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 验证数据并填充数据</span><br><span class="line">func (v ValidRegister) Validated(b *beego.Controller, validated ValidRegister) &#123;</span><br><span class="line">	data := b.Input() //得到参数</span><br><span class="line">	<span class="keyword">if</span> err := validated.Comparison(&amp;data); err != nil &#123; //如果错误则直接返回</span><br><span class="line">		b.Data[<span class="string">"json"</span>] = ControllerPageResponse&#123;</span><br><span class="line">			Code:    100,</span><br><span class="line">			Message: err.Error(),</span><br><span class="line">			Data:    <span class="string">""</span>,</span><br><span class="line">		&#125;</span><br><span class="line">		b.ServeJSON()</span><br><span class="line">		b.StopRun()</span><br><span class="line">	&#125;</span><br><span class="line">	//重新设置beego框架接收的参数</span><br><span class="line">	bTemp := b.Ctx.Input</span><br><span class="line">	bTemp.ResetParams()</span><br><span class="line">	<span class="keyword">for</span> k, v := range data &#123;</span><br><span class="line">		bTemp.SetParam(k, v[0])</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//基础分页验证</span><br><span class="line">func BasePagiantion() ValidRegister &#123;</span><br><span class="line">	<span class="built_in">return</span> ValidRegister&#123;</span><br><span class="line">		<span class="string">"page"</span>: Valid&#123;</span><br><span class="line">			Default: <span class="string">"1"</span>,</span><br><span class="line">			Rgx:     RgxNumber,</span><br><span class="line">			Msg:     <span class="string">"仅支持数字 默认1"</span>,</span><br><span class="line">		&#125;,</span><br><span class="line">		<span class="string">"page_size"</span>: Valid&#123;</span><br><span class="line">			Default: <span class="string">"10"</span>,</span><br><span class="line">			Rgx:     RgxPageSize,</span><br><span class="line">			Msg:     <span class="string">"默认10 每页数据量1-100条"</span>,</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="控制器-具体实现参考beego"><a href="#控制器-具体实现参考beego" class="headerlink" title="控制器(具体实现参考beego)"></a>控制器(具体实现参考beego)</h3><h4 id="为公共的-BaseController-控制器添加-验证函数"><a href="#为公共的-BaseController-控制器添加-验证函数" class="headerlink" title="为公共的 BaseController 控制器添加 验证函数"></a>为公共的 BaseController 控制器添加 验证函数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func (b *BaseController) Validated(validated plugin.ValidRegister) &#123;</span><br><span class="line">	b.Validator.Validated(&amp;b.Controller, validated)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="ResidentControlle-继承-BaseController的方法-并直接调用"><a href="#ResidentControlle-继承-BaseController的方法-并直接调用" class="headerlink" title="ResidentControlle 继承 BaseController的方法 并直接调用"></a>ResidentControlle 继承 BaseController的方法 并直接调用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">func (this *ResidentController) Edit() &#123;</span><br><span class="line">    this.Validated(plugin.ValidRegister&#123;</span><br><span class="line">        &quot;user_id&quot;: plugin.Valid&#123;</span><br><span class="line">            Default: &quot;0&quot;,</span><br><span class="line">            Rgx:     plugin.RgxNumberPositive,</span><br><span class="line">            Msg:     &quot;只能为数字&quot;,</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="验证器-二阶段"><a href="#验证器-二阶段" class="headerlink" title="验证器 二阶段"></a>验证器 二阶段</h3><blockquote>
+<p>加入多线程 并用通道接收错误</p>
+</blockquote>
+<blockquote>
+<p>更加优雅的调用方式</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://gre-z.github.io/2019/04/24/Beego-自定义过滤验证器/" data-id="cjuv6ge1h0002m0ceycsu26zx" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/beego/">beego</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/go/">go</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vilidated/">vilidated</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Go语言闭包" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/04/24/Go语言闭包/" class="article-date">
+  <time datetime="2019-04-24T11:43:01.000Z" itemprop="datePublished">2019-04-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/go/">go</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header" style="margin-bottom:5px;color:#4876FF">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/24/Go语言闭包/">Go语言闭包</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是闭包"><a href="#什么是闭包" class="headerlink" title="什么是闭包"></a>什么是闭包</h2><ul>
+<li>环境(某些初始化操作 如定义变量) + 函数(返回一个函数用于后续调用)<h2 id="简单示例"><a href="#简单示例" class="headerlink" title="简单示例"></a>简单示例</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">// 创建一个玩家生成器, 输入名称, 输出生成器</span><br><span class="line">func playerGen(name string) func() (string, int) &#123;</span><br><span class="line"></span><br><span class="line">    // 血量一直为150</span><br><span class="line">    // 环境</span><br><span class="line">    hp := 150</span><br><span class="line"></span><br><span class="line">    // 返回创建的闭包</span><br><span class="line">    // 函数</span><br><span class="line">    <span class="built_in">return</span> func() (string, int) &#123;</span><br><span class="line">        // 将变量引用到闭包中</span><br><span class="line">        <span class="built_in">return</span> name, hp</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func <span class="function"><span class="title">main</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    // 创建一个玩家生成器 </span><br><span class="line">    // 在这里初始化了环境</span><br><span class="line">    generator := playerGen(<span class="string">"high noon"</span>) </span><br><span class="line">    </span><br><span class="line">    // 执行该环境里的函数</span><br><span class="line">    // 返回玩家的名字和血量</span><br><span class="line">    name, hp := generator()</span><br><span class="line"></span><br><span class="line">    // 打印值</span><br><span class="line">    fmt.Println(name, hp)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="为什么用到这个"><a href="#为什么用到这个" class="headerlink" title="为什么用到这个"></a>为什么用到这个</h2><h3 id="查询数据库时经常要关联查询省市区代码数据"><a href="#查询数据库时经常要关联查询省市区代码数据" class="headerlink" title="查询数据库时经常要关联查询省市区代码数据"></a>查询数据库时经常要关联查询省市区代码数据</h3><blockquote>
+<p>因为五级省市区数据大,关联性能严重下讲</p>
+</blockquote>
+<blockquote>
+<p>如果每次重redis取数据 在大量地址相同的情况下性能些微影响 所以缓存到map中</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">// 缓存读取省市区</span><br><span class="line">func (c *Cache) SetArea() func(string) string &#123;</span><br><span class="line">	db2 := db.Sql().Model(models.Feipin_district2&#123;&#125;) //来自Gorm框架实例</span><br><span class="line">	areaMap := make(map[string]string) //初始化一个空的 map</span><br><span class="line">	<span class="built_in">return</span> func(code string) (name string) &#123; //这里返回一个闭包函数</span><br><span class="line">	    <span class="keyword">if</span> v, ok := areaMap[code]; !ok &#123; //如果map没有这个数据 则从缓存中读取并添加到map中</span><br><span class="line">			<span class="keyword">if</span> str, err := c.GetCache(code); err == nil &#123;//从redis缓存读取   			</span><br><span class="line">			    areaMap[code] = str</span><br><span class="line">				<span class="built_in">return</span> str</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;//map没有数据 且 缓存没有 则从数据库中查询添加到缓存中</span><br><span class="line">				area := models.Feipin_district2&#123;&#125; //初始化数据库结构体</span><br><span class="line">				<span class="keyword">if</span> err := db2.Where(<span class="string">"code=?"</span>, code).First(&amp;area).Error; err == nil &#123;</span><br><span class="line">					name = area.Name</span><br><span class="line">					areaMap[code] = name</span><br><span class="line">					c.SetCache(code, name, 0) //添加到redis缓存</span><br><span class="line">					area = models.Feipin_district2&#123;&#125;</span><br><span class="line">					<span class="built_in">return</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123; 如果map有数据则直接返回</span><br><span class="line">			<span class="built_in">return</span> v</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">return</span></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="省市区结构体"><a href="#省市区结构体" class="headerlink" title="省市区结构体"></a>省市区结构体</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">type</span> Feipin_district2 struct &#123;</span><br><span class="line">	Id       int64</span><br><span class="line">	Name     string `description:<span class="string">"名称"</span>`</span><br><span class="line">	ParentId int64  `description:<span class="string">"上级id"</span>`</span><br><span class="line">	Code     string `description:<span class="string">"码"</span>`</span><br><span class="line">	Level    int64  `description:<span class="string">"层级"</span>`</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">area := Cache&#123;&#125;.SetArea() //初始化这个闭包</span><br><span class="line"></span><br><span class="line">province := area(<span class="string">"350000"</span>) //返回对应的中文</span><br><span class="line">city := area(<span class="string">"350200"</span>) //返回对应的中文</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://gre-z.github.io/2019/04/24/Go语言闭包/" data-id="cjuv69xyk0000lncedue6cr8u" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/go/">go</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gorm/">gorm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/闭包/">闭包</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Go语言时间解析Json-Gorm框架解析" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/04/20/Go语言时间解析Json-Gorm框架解析/" class="article-date">
@@ -120,7 +226,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://gre-z.github.io/2019/04/20/Go语言时间解析Json-Gorm框架解析/" data-id="cjup58y1y000101cepdkn2v73" class="article-share-link">Share</a>
+      <a data-url="http://gre-z.github.io/2019/04/20/Go语言时间解析Json-Gorm框架解析/" data-id="cjuv69xyq0002lnce5z7nhkg4" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/go/">go</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gorm/">gorm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/time-Time/">time.Time</a></li></ul>
@@ -152,7 +258,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gorm/">gorm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/time-Time/">time.Time</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/beego/">beego</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gorm/">gorm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/time-Time/">time.Time</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vilidated/">vilidated</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/闭包/">闭包</a></li></ul>
     </div>
   </div>
 
@@ -162,7 +268,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/go/" style="font-size: 10px;">go</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/time-Time/" style="font-size: 10px;">time.Time</a>
+      <a href="/tags/beego/" style="font-size: 10px;">beego</a> <a href="/tags/go/" style="font-size: 20px;">go</a> <a href="/tags/gorm/" style="font-size: 15px;">gorm</a> <a href="/tags/time-Time/" style="font-size: 10px;">time.Time</a> <a href="/tags/vilidated/" style="font-size: 10px;">vilidated</a> <a href="/tags/闭包/" style="font-size: 10px;">闭包</a>
     </div>
   </div>
 
@@ -182,6 +288,14 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/04/24/Beego-自定义过滤验证器/">Beego 自定义过滤验证器</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/24/Go语言闭包/">Go语言闭包</a>
+          </li>
         
           <li>
             <a href="/2019/04/20/Go语言时间解析Json-Gorm框架解析/">Go语言时间解析Json/Gorm框架解析</a>
